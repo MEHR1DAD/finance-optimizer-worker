@@ -1,4 +1,4 @@
-name: Scrape Vahid (Optimized)
+name: Market Data Assessment
 
 on:
   schedule:
@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  scrape-vahid:
+  analyze-market:
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -14,7 +14,7 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1 # Shallow clone for speed
+          fetch-depth: 1
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -26,32 +26,30 @@ jobs:
         run: |
           pip install -r backend/requirements.txt
 
-      - name: Run Scraper (Vahid Only)
+      - name: Run Analysis
         env:
           TELEGRAM_API_ID: ${{ secrets.TELEGRAM_API_ID }}
           TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           TELEGRAM_SESSION: ${{ secrets.TELEGRAM_SESSION }}
         run: |
-          python3 backend/main.py --channels backend/channels.txt --output news_vahid.json --limit 100 --max-duration 250
+          python3 backend/main.py --channels backend/config.txt --output market_data.json --limit 100 --max-duration 250
 
       - name: Commit & Push (Force)
         run: |
-          git config --global user.name "Vahid Scraper Bot"
-          git config --global user.email "bot@vahid.news"
+          git config --global user.name "MarketBot"
+          git config --global user.email "bot@finance.local"
           
-          git add news_vahid.json
+          git add market_data.json
           git add media/ || echo "No media folder"
           
-          # Prune old media (>24h) to keep repo light
           if [ -d "media" ]; then
-             echo "🧹 Pruning old media..."
+             echo "🧹 Pruning old cache..."
              find media -type f -mtime +1 -delete || true
           fi
           
-          # Commit if changes exist
           if [ -n "$(git status --porcelain)" ]; then
-            git commit -m "🚀 Update Vahid News $(date +'%Y-%m-%d %H:%M')"
+            git commit -m "📈 Update Market Data $(date +'%Y-%m-%d %H:%M')"
             git push
           else
-            echo "No changes to commit."
+            echo "No changes."
           fi
