@@ -35,9 +35,8 @@ jobs:
           TELEGRAM_API_HASH: ${{ secrets.TELEGRAM_API_HASH }}
           TELEGRAM_SESSION: ${{ secrets.TELEGRAM_SESSION }}
         run: |
-          # Use config.txt since main.py might change CWD or expect relative path from backend
-          # Trying with simple filename if script switches dir
-          python3 backend/main.py --channels backend/config.txt --output market_data.json --limit 100 --max-duration 250
+          # Use config.txt relative to backend dir as script expects
+          python3 backend/main.py --channels config.txt --output market_data.json --limit 100 --max-duration 250
           
           # --- DEPLOYMENT TO GH-PAGES ---
           mkdir -p /tmp/deploy_cache
