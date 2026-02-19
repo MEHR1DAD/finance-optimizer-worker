@@ -435,8 +435,10 @@ async def main():
                 seen_ids.add(item['id'])
         
         merged_news.sort(key=lambda x: x['date'], reverse=True)
-        # Stability: Keep only last 200 items to prevent storage overflow
-        merged_news = merged_news[:200]
+        # Content Strategy: Unlimited items (User Request). 
+        # We rely on 'Global Size Safety Sweep' and external Prune workflows to manage repo size.
+        # This allows text-heavy channels to retain history while large media is pruned.
+        # merged_news = merged_news[:200]  <-- Removed limit
         
         # Cleanup orphaned media files
         # NOTE: With split files, multiple JSONs reference the same MEDIA_DIR.
