@@ -485,6 +485,19 @@ async def main():
                 except Exception as e:
                      print(f"Error checking file size {filename}: {e}")
 
+        # Write error log to a public file for debugging
+        error_log_path = os.path.join(os.path.dirname(OUTPUT_FILE), 'debug_errors.txt')
+        with open(error_log_path, 'w', encoding='utf-8') as f:
+            vahid_online_count = sum(1 for item in merged_news if item.get('source') == 'VahidOOnLine')
+            f.write(f"Stats: Total={len(merged_news)}, VahidOOnLine={vahid_online_count}\n")
+            f.write("--- Errors ---\n")
+            # We need to make sure DEBUG_ERRORS exists or use a local list if we couldn't add the global one
+            if 'DEBUG_ERRORS' in globals():
+                for err in DEBUG_ERRORS:
+                    f.write(f"{err}\n")
+            else:
+                f.write("DEBUG_ERRORS list not found (globals mismatch).\n")
+
         os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
         with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
             json.dump(merged_news, f, ensure_ascii=False, indent=2)
