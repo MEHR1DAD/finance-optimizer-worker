@@ -35,10 +35,25 @@ API_HASH = os.environ.get("TELEGRAM_API_HASH")
 SESSION_STRING = os.environ.get("TELEGRAM_SESSION")
 
 # Resolve paths
-BASE_DIR = os.path.dirname(__file__)
-CHANNELS_FILE = os.path.join(BASE_DIR, args.channels)
-# In public repo, we want flexibility. If args.output starts with ../, it's relative to BASE_DIR
-OUTPUT_FILE = os.path.join(BASE_DIR, args.output)
+# Resolve paths
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Channels file resolution
+if os.path.exists(args.channels):
+    CHANNELS_FILE = args.channels
+else:
+    CHANNELS_FILE = os.path.join(BASE_DIR, args.channels)
+
+# Output file resolution
+if os.path.isabs(args.output):
+    OUTPUT_FILE = args.output
+else:
+    # If path starts with ../ or ./, treat as relative to CWD or BASE_DIR?
+    # Original logic forced relative to BASE_DIR. 
+    # Let's try to verify if we can write to CWD first.
+    # Actually, simplest match to previous logic:
+    OUTPUT_FILE = os.path.join(BASE_DIR, args.output)
+
 MEDIA_DIR = os.path.join(BASE_DIR, '../media') if '..' in args.output else os.path.join(BASE_DIR, '../frontend/public/media')
 
 # Simple fallback for media dir to be in root if output is in root
