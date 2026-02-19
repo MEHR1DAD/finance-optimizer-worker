@@ -52,6 +52,7 @@ jobs:
           # Prepare 'public' directory for Pages
           mkdir -p public
           mv market_data.json public/
+          mv debug_errors.txt public/ || true
           
           # Move media if it exists
           if [ -d "media" ]; then
