@@ -12,6 +12,7 @@ import time
 
 # Global flag for graceful exit
 STOP_REQUESTED = False
+DEBUG_ERRORS = []
 
 def signal_handler(sig, frame):
     global STOP_REQUESTED
@@ -313,7 +314,9 @@ async def fetch_channel_news(client, target, channel_name, limit, min_id=0):
             news_items.append(item)
             
     except Exception as e:
-        print(f"Error fetching from {channel_name}: {e}")
+        error_msg = f"Error fetching from {channel_name}: {e}"
+        print(error_msg)
+        DEBUG_ERRORS.append(error_msg)
         
     return news_items
 
