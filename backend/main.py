@@ -509,6 +509,15 @@ async def main():
         
     except Exception as e:
         print(f"Critical Error: {e}")
+        try:
+            # Emergency Log Write
+            error_log_path = os.path.join(os.path.dirname(OUTPUT_FILE), 'debug_errors.txt')
+            with open(error_log_path, 'a', encoding='utf-8') as f: # Append mode in case we wrote something before
+                 f.write(f"\nCRITICAL FAILURE: {e}\n")
+                 import traceback
+                 traceback.print_exc(file=f)
+        except:
+            pass
         exit(1)
     finally:
         await client.disconnect()
