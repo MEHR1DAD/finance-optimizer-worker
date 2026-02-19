@@ -47,7 +47,8 @@ jobs:
           TELEGRAM_SESSION: ${{ secrets.TELEGRAM_SESSION_FINANCE }}
         run: |
           # Run the script to generate market_data.json in the root
-          python3 backend/main.py --channels config.txt --output ../market_data.json --limit 100 --max-duration 250 > run_log.txt 2>&1 || true
+          echo "--- EXECUTION ID: RUN 11 ---" > run_log.txt
+          python3 backend/main.py --channels config.txt --output ../market_data.json --limit 100 --max-duration 250 >> run_log.txt 2>&1 || true
           
           # Prepare 'public' directory for Pages
           mkdir -p public
